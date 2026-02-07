@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Pregunta peligrosa 💘</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    user-select: none;
+}
+
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle, #ffdde1, #ee9ca7);
+    font-family: 'Segoe UI', sans-serif;
+    overflow: hidden;
+}
+
+/* 💥 Temblor */
+.shake {
+    animation: shake 0.4s;
+}
+
+@keyframes shake {
+    0% { transform: translate(0); }
+    25% { transform: translate(-5px, 5px); }
+    50% { transform: translate(5px, -5px); }
+    75% { transform: translate(-5px, -5px); }
+    100% { transform: translate(0); }
+}
+
+.card {
+    background: white;
+    width: 360px;
+    padding: 40px;
+    border-radius: 25px;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    position: relative;
+    z-index: 2;
+}
+
+h1 {
+    color: #e91e63;
+    font-size: 2.3em;
+}
+
+.zona {
+    position: relative;
+    height: 160px;
+    margin-top: 30px;
+}
+
+button {
+    padding: 14px 32px;
+    font-size: 18px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    position: absolute;
+    transition: transform 0.2s;
+}
+
+#si {
+    background: linear-gradient(45deg, #4CAF50, #8BC34A);
+    color: white;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+}
+
+#si:hover {
+    transform: translateX(-50%) scale(1.15);
+}
+
+#no {
+    background: linear-gradient(45deg, #f44336, #ff1744);
+    color: white;
+    top: 0;
+    left: 10px;
+    touch-action: none;
+}
+
+.contador {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #555;
+}
+
+/* 💕 Corazones */
+.corazon {
+    position: absolute;
+    bottom: -20px;
+    color: #ff4081;
+    animation: flotar 6s linear infinite;
+}
+
+@keyframes flotar {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(-110vh); opacity: 0; }
+}
+
+/* ⚠️ Error falso */
+.error {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    text-align: center;
+    z-index: 10;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card" id="card">
+    <h1>¿Me amas? 💖</h1>
+
+    <div class="zona" id="zona">
+        <button id="si">Sí 💘</button>
+        <button id="no" tabindex="-1">No 😶</button>
+    </div>
+
+    <div class="contador" id="contador">
+        Intentos de decir que no: 0
+    </div>
+</div>
+
+<script>
+const nombre = "Mi amor"; // 💌 CAMBIA EL NOMBRE AQUÍ
+
+const zona = document.getElementById("zona");
+const botonNo = document.getElementById("no");
+const botonSi = document.getElementById("si");
+const contador = document.getElementById("contador");
+const card = document.getElementById("card");
+
+let intentos = 0;
+
+/* ❌ Bloqueo total del NO */
+["click","keydown"].forEach(e =>
+    botonNo.addEventListener(e, ev => ev.preventDefault())
+);
+
+["mouseenter","mousedown","touchstart"].forEach(e =>
+    botonNo.addEventListener(e, huir)
+);
+
+function huir(e){
+    e.preventDefault();
+    intentos++;
+    contador.textContent = "Intentos de decir que no: " + intentos;
+
+    card.classList.add("shake");
+    setTimeout(() => card.classList.remove("shake"), 300);
+
+    if(intentos === 3) mostrarError();
+    if(intentos >= 5) {
+        botonNo.style.display = "none";
+        contador.textContent = "El NO fue eliminado 😌";
+        setTimeout(revivirNo, 1500);
+        return;
+    }
+
+    moverNo();
+}
+
+function moverNo() {
+    const maxX = zona.clientWidth - botonNo.offsetWidth;
+    const maxY = zona.clientHeight - botonNo.offsetHeight;
+
+    botonNo.style.left = Math.random() * maxX + "px";
+    botonNo.style.top = Math.random() * maxY + "px";
+    botonNo.style.transform =
+        `scale(${Math.max(0.6,1-intentos*0.1)}) rotate(${Math.random()*20-10}deg)`;
+}
+
+function revivirNo() {
+    botonNo.style.display = "block";
+    intentos = 0;
+    contador.textContent = "El NO volvió... 😈";
+    moverNo();
+}
+
+function mostrarError() {
+    const err = document.createElement("div");
+    err.className = "error";
+    err.innerHTML = "⚠️ ERROR DEL SISTEMA<br>No se puede decir NO";
+    document.body.appendChild(err);
+    setTimeout(() => err.remove(), 1500);
+}
+
+/* 💘 SÍ */
+botonSi.addEventListener("click", () => {
+    document.body.innerHTML = `
+        <div style="
+            height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+            text-align:center;
+            font-family:'Segoe UI', sans-serif;
+        ">
+            <h1 style="color:white;font-size:3em;">
+                💘 ${nombre}, sabías que me amas 💘<br>
+                <span style="font-size:0.6em;">Nunca hubo otra opción 😌</span>
+            </h1>
+        </div>
+    `;
+});
+
+/* 💕 Corazones */
+setInterval(() => {
+    const c = document.createElement("div");
+    c.className = "corazon";
+    c.textContent = "💖";
+    c.style.left = Math.random()*100 + "vw";
+    c.style.fontSize = 14 + Math.random()*20 + "px";
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),6000);
+}, 350);
+</script>
+
+</body>
+</html>
+
